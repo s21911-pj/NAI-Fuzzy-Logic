@@ -58,12 +58,14 @@ def calculate(home_work_param, colloquial_param, activity_param):
     rating['5'] = fuzz.trimf(rating.universe, [37, 45, 45])
     rating['6'] = fuzz.trimf(rating.universe, [45, 49, 49])
 
+
+
     #  define the relationship between input and output variables. We defined rule for each rating
     rule1 = ctrl.Rule(home_work['poor'] | activity['poor'] | colloquial['poor'], rating['1'])
-    rule2 = ctrl.Rule(home_work['average'] | activity['average'] | colloquial['average'], rating['2'])
+    rule2 = ctrl.Rule(home_work['poor'] | activity['poor'] | colloquial['average'], rating['2'])
     rule3 = ctrl.Rule(home_work['poor'] | activity['average'] | colloquial['average'], rating['3'])
-    rule4 = ctrl.Rule(home_work['good'] | activity['good'] | colloquial['good'], rating['4'])
-    rule5 = ctrl.Rule(home_work['average'] | activity['good'] | colloquial['good'], rating['5'])
+    rule4 = ctrl.Rule(home_work['average'] | activity['good'] | colloquial['good'], rating['4'])
+    rule5 = ctrl.Rule(home_work['good'] | activity['good'] | colloquial['good'], rating['5'])
     rule6 = ctrl.Rule(home_work['good'] | activity['good'] | colloquial['excellent'], rating['6'])
 
     # create a control system
