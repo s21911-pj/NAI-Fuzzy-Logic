@@ -22,8 +22,6 @@ def build_arg_parser():
     parser = argparse.ArgumentParser(description='Compute similarity score')
     parser.add_argument('--user1', dest='user1', required=True,
                         help='First user')
-    parser.add_argument("--score-type", dest="score_type", required=True,
-                        choices=['Euclidean', 'Pearson'], help='Similarity metric to be used')
     return parser
 
 
@@ -147,7 +145,6 @@ def get_recommended_movies(data, user, recomended_user):
 if __name__ == '__main__':
     args = build_arg_parser().parse_args()
     user1 = args.user1
-    score_type = args.score_type
 
     ratings_file = 'ratings.json'
 
