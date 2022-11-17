@@ -138,7 +138,7 @@ def get_recommended_movies(data, user, recomended_user):
     for movie in recommend_movies:
         print("Title: ", movie[0], ' with score: ', movie[1])
 
-    print("Recommended Movies for", user, "based on:", recomended_user[0])
+    print("Not recommended Movies for", user, "based on:", recomended_user[0])
     for movie in not_recommend_movies:
         print("Title: ", movie[0], ' with score: ', movie[1])
 
@@ -159,5 +159,6 @@ if __name__ == '__main__':
 
     print("Pearson correlation Method:")
     get_recommended_movies(data, user1, pearson_score_data[0])
+    print("---------------------------")
     print("Euclidean distance Method:")
     get_recommended_movies(data, user1, euclidean_score_data[0])
