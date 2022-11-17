@@ -1,3 +1,18 @@
+# Authors:
+# Karol Kraus s20687
+# Piotr Mastalerz s21911
+
+# environmental instructions
+# create venv
+#   python3 -m venv venv
+# activate venv
+#   source venv/bin/activate
+# install packages
+#   pip3 install -r requirements.txt
+# run app
+#   python3 main.py
+
+
 import argparse
 import json
 import numpy as np
@@ -7,8 +22,6 @@ def build_arg_parser():
     parser = argparse.ArgumentParser(description='Compute similarity score')
     parser.add_argument('--user1', dest='user1', required=True,
                         help='First user')
-    parser.add_argument('--user2', dest='user2', required=True,
-                        help='Second user')
     parser.add_argument("--score-type", dest="score_type", required=True,
                         choices=['Euclidean', 'Pearson'], help='Similarity metric to be used')
     return parser
@@ -31,7 +44,7 @@ def euclidean_score(dataset, user1, user2):
 
     # If there are no common movies between the users, 
     # then the score is 0 
-    if len(common_movies) == 0:
+    if len(common_movies) < 2:
         return 0
 
     squared_diff = []
@@ -61,7 +74,7 @@ def pearson_score(dataset, user1, user2):
     num_ratings = len(common_movies)
 
     # If there are no common movies between user1 and user2, then the score is 0 
-    if num_ratings == 0:
+    if len(common_movies) < 2:
         return 0
 
     # Calculate the sum of ratings of all the common movies 
@@ -85,13 +98,55 @@ def pearson_score(dataset, user1, user2):
 
     return Sxy / np.sqrt(Sxx * Syy)
 
+def get_users(data):
+    users = []
+    for i in data:
+        if i != user1:
+            users.append(i)
+    return users
+
+def get_scores(data, userList, current_user):
+    pearsonScoreList = {}
+    eucalideanScoreList = {}
+
+    for user in userList:
+        eucalideanScoreList[user] = (euclidean_score(data, current_user, user))
+    for user in userList:
+        pearsonScoreList[user] = (pearson_score(data, current_user, user))
+
+    eucalideanScoreList = sorted(eucalideanScoreList.items(), key=lambda x: x[1], reverse=True)
+    pearsonScoreList = sorted(pearsonScoreList.items(), key=lambda x: x[1], reverse=True)
+
+    return eucalideanScoreList, pearsonScoreList
+
+def get_recommended_movies(data, user, recomended_user):
+    recommend_movies = []
+    not_recommend_movies = []
+
+    sortedMoviesDesc = (sorted(data[recomended_user[0]].items(), key=lambda x: x[1], reverse=True))
+    sortedMoviesAsc = (sorted(data[recomended_user[0]].items(), key=lambda x: x[1], reverse=True))
+
+    for item in sortedMoviesDesc:
+        if item[0] not in data[user].keys() and len(recommend_movies) < 5 and item[1] > 7:
+            recommend_movies.append(item)
+
+    for item in sortedMoviesAsc:
+        if item[0] not in data[user] and len(not_recommend_movies) < 5 and item[1] < 4:
+            not_recommend_movies.append(item)
+
+    print("Recommended Movies for", user, "based on:", recomended_user[0])
+    for movie in recommend_movies:
+        print("Title: ", movie[0], ' with score: ', movie[1])
+
+    print("Recommended Movies for", user, "based on:", recomended_user[0])
+    for movie in not_recommend_movies:
+        print("Title: ", movie[0], ' with score: ', movie[1])
+
+
 
 if __name__ == '__main__':
     args = build_arg_parser().parse_args()
-    print(args.user1)
-    print(args.user2)
     user1 = args.user1
-    user2 = args.user2
     score_type = args.score_type
 
     ratings_file = 'ratings.json'
@@ -99,9 +154,10 @@ if __name__ == '__main__':
     with open(ratings_file, 'r') as f:
         data = json.loads(f.read())
 
-    if score_type == 'Euclidean':
-        print("\nEuclidean score:")
-        print(euclidean_score(data, user1, user2))
-    else:
-        print("\nPearson score:")
-        print(pearson_score(data, user1, user2))
+    userList = get_users(data)
+    pearson_score_data, euclidean_score_data = get_scores(data,userList, user1)
+
+    print("Pearson correlation Method:")
+    get_recommended_movies(data, user1, pearson_score_data[0])
+    print("Euclidean distance Method:")
+    get_recommended_movies(data, user1, euclidean_score_data[0])
