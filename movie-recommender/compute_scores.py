@@ -2,6 +2,10 @@
 # Karol Kraus s20687
 # Piotr Mastalerz s21911
 
+# Program returns 5 recommended and not-recommended movies for specified user based on database with ratings.
+# It is computed by two algorithms: Euclidean distance and Pearson correlation
+# Ratings by other users are provider in data.csv file which was concerted to json by script in coverter.py
+
 # environmental instructions
 # create venv
 #   python3 -m venv venv
@@ -10,7 +14,7 @@
 # install packages
 #   pip3 install -r requirements.txt
 # run app
-#   python3 main.py
+#   python3 compute_scores.py --user1 "USER FROM DATA!!!"
 
 
 import argparse
@@ -96,7 +100,16 @@ def pearson_score(dataset, user1, user2):
 
     return Sxy / np.sqrt(Sxx * Syy)
 
+
 def get_users(data):
+    """
+    return list with all user
+
+    :param data: ({}) : whole data fetched from json file
+    :return:
+        users: (string[]) all users
+
+    """
     users = []
     for i in data:
         if i != user1:
@@ -104,6 +117,17 @@ def get_users(data):
     return users
 
 def get_scores(data, userList, current_user):
+    """
+    return sorted scores computed by two algorithms
+
+    :param data: ({}) : whole data fetched from json file
+    :param userList: (string[]) : list of all users
+    :param current_user: (string) : fullname of passed user
+    :return:
+        eucalideanScoreList: (string[]) sorted list of scores computed with eucalidean
+        pearsonScoreList: (string[]) sorted list of scores computed with pearson
+    """
+
     pearsonScoreList = {}
     eucalideanScoreList = {}
 
@@ -118,6 +142,15 @@ def get_scores(data, userList, current_user):
     return eucalideanScoreList, pearsonScoreList
 
 def get_recommended_movies(data, user, recomended_user):
+    """
+        return 5 recommended and 5 not-recommended movies for specified user
+
+        :param data: ({}) : whole data fetched from json file
+        :param user: (string) : fullname of passed user
+        :param recomended_user: (string) : most fitted user(highest rated by choosen algorith
+        :return:
+            none - printing result to console
+        """
     recommend_movies = []
     not_recommend_movies = []
 
