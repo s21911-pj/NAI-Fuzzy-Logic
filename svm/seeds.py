@@ -1,3 +1,21 @@
+# Authors:
+# Karol Kraus s20687
+# Piotr Mastalerz s21911
+
+#  Program shows SVM algorithm and tree algorithm  for Wheat Seeds Dataset
+# The Wheat Seeds Dataset involves the prediction of species given measurements of seeds from different varieties of wheat.
+# https://machinelearningmastery.com/standard-machine-learning-datasets/
+
+# environmental instructions
+# create venv
+#   python3 -m venv venv
+# activate venv
+#   source venv/bin/activate
+# install packages
+#   pip3 install -r requirements.txt
+# run app
+#   python3 cancer.py
+
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.svm import SVC
