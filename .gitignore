@@ -1,3 +1,7 @@
 /fuzzy-logic/venv
 /movie-recommender/venv
 /.idea/
+/svm/venv
+/svm/.DS_Store
+.DS_Store
+/venv
