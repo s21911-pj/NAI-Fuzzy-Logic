@@ -2,6 +2,13 @@
 # Karol Kraus s20687
 # Piotr Mastalerz s21911
 
+# application recognize hand gestures thanks to that we can control Spotify player
+# list of gestures and actions:
+
+# thumbs up - volume UP
+# thumbs down - volume DOWN
+# peace - next song
+# stop - stop song
 
 # environmental instructions
 # create venv
@@ -13,8 +20,8 @@
 # run app
 #   python3 main.py
 
-# import necessary packages for hand gesture recognition project using Python OpenCV
 
+# import necessary packages for hand gesture recognition project using Python OpenCV
 import cv2
 import numpy as np
 import mediapipe as mp
@@ -22,19 +29,29 @@ from keras.models import load_model
 import pyautogui as keyboard
 
 # initialize mediapipe
+# MediaPipe is a customizable machine learning solutions framework developed by Google.
+# It is an open-source and cross-platform framework, and it is very lightweight.
+# MediaPipe comes with some pre-trained ML solutions such as face detection, pose estimation,
+# hand recognition, object detection, etc.
+
 mpHands = mp.solutions.hands
 hands = mpHands.Hands(max_num_hands=1, min_detection_confidence=0.7)
 mpDraw = mp.solutions.drawing_utils
 
-# Load the gesture recognizer model
+# Initialize Tensorflow
+# Load the gesture recognizer model (we load the TensorFlow pre-trained model)
+# The model can recognize 10 different gestures.
+
 model = load_model('mp_hand_gesture')
 
 # Load class names
+# Gesture.names file contains the name of the gesture classes
 f = open('gesture.names', 'r')
 classNames = f.read().split('\n')
 f.close()
-print(classNames)
 
+# We create a VideoCapture object and pass an argument ‘0’ - It is the camera ID of the system.
+# In this case, we have 1 webcam connected with the system.
 cap = cv2.VideoCapture(0)
 
 while True:
@@ -50,9 +67,9 @@ while True:
     # Get hand landmark prediction
     result = hands.process(framergb)
 
-    # print(result)
 
     className = ''
+    classID = None
 
     # post process the result
     if result.multi_hand_landmarks:
@@ -78,28 +95,23 @@ while True:
     cv2.putText(frame, className, (10, 50), cv2.FONT_HERSHEY_SIMPLEX,
                 1, (0, 0, 255), 2, cv2.LINE_AA)
 
-    """
-       perform action in media player
-       """
+    # according to the gesture we control the spotify player
+
     if classID == 2:
-        keyboard.press("up")
+        keyboard.hotkey("command", "up")
     elif classID == 3:
-        keyboard.press("down")
+        keyboard.hotkey("command", "down")
     elif classID == 5:
         keyboard.press("space")
-    elif classID == 6:
-        keyboard.press("right")
+    elif classID == 1:
+        keyboard.hotkey("command", "right")
     else:
         pass
 
-    """
-    show the Gestures Handler Dialog
-    """
+
     cv2.imshow("Gesture Handler", frame)
 
-    """
-    quite the app if 'q' is hit
-    """
+    # function keeps the window open until the key ‘q’ is pressed.
 
     if cv2.waitKey(1) == ord('q'):
         break
