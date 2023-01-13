@@ -18,8 +18,8 @@
 import cv2
 import numpy as np
 import mediapipe as mp
-import tensorflow as tf
 from keras.models import load_model
+import pyautogui as keyboard
 
 # initialize mediapipe
 mpHands = mp.solutions.hands
@@ -78,9 +78,28 @@ while True:
     cv2.putText(frame, className, (10, 50), cv2.FONT_HERSHEY_SIMPLEX,
                 1, (0, 0, 255), 2, cv2.LINE_AA)
 
-    print(className)
-    # Show the final output
-    cv2.imshow("Output", frame)
+    """
+       perform action in media player
+       """
+    if classID == 2:
+        keyboard.press("up")
+    elif classID == 3:
+        keyboard.press("down")
+    elif classID == 5:
+        keyboard.press("space")
+    elif classID == 6:
+        keyboard.press("right")
+    else:
+        pass
+
+    """
+    show the Gestures Handler Dialog
+    """
+    cv2.imshow("Gesture Handler", frame)
+
+    """
+    quite the app if 'q' is hit
+    """
 
     if cv2.waitKey(1) == ord('q'):
         break
